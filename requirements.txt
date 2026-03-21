@@ -10,3 +10,4 @@ pydantic-settings==2.1.0
 python-dotenv==1.0.0
 python-socketio==5.10.0
 pydantic[email]
+agora-token-builder==1.0.0
