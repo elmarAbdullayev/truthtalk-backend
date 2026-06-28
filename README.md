@@ -1,187 +1,187 @@
-# 🧠 TruthTalk Backend
+# TruthTalk Backend – Real-Time Voice Room API
 
-A scalable backend system for a real-time social communication platform with rooms, moderation, authentication, and role-based access control.
+## 📌 Overview
 
-Built with FastAPI, SQLAlchemy, and JWT authentication, the system supports real-time room creation, user participation, and administrative moderation features such as banning, muting, and kicking users.
+TruthTalk Backend is a FastAPI-based REST API that powers a real-time voice communication platform.
+
+It handles authentication, room management, user administration, and real-time voice token generation using Agora RTC.
+
+The system is designed with scalability, security, and role-based access control (user / admin).
 
 ---
 
-## 🚀 Features
+## ⚙️ Tech Stack
 
-### 🔐 Authentication & Security
-- JWT-based authentication (OAuth2 flow)
+- FastAPI
+- SQLAlchemy
+- MySQL (PyMySQL)
+- JWT Authentication (python-jose)
+- Passlib (bcrypt)
+- Pydantic
+- Agora RTC Token Builder
+- Uvicorn
+
+---
+
+## 🏗️ Project Architecture
+
+Core structure:
+
+- auth → user registration & login
+- rooms → create, join, leave, manage rooms
+- admin → user & room administration
+- core → security, dependencies, configuration
+- models → database models (User, Room, Participant)
+- schemas → request/response validation
+- services → Agora token service
+
+---
+
+## 🔐 Authentication System
+
+- JWT-based authentication
 - Password hashing with bcrypt
-- Role-based access control (User / Admin)
-- Optional guest access support
-- Secure token validation middleware
+- Token validation middleware
+- Protected routes using dependencies
+
+Features:
+- Register new user
+- Login user
+- Secure token generation
+- Current user dependency injection
 
 ---
 
-### 🏠 Room System
-- Create public/private rooms
-- Join and leave rooms dynamically
-- Auto room deletion when empty
-- Room status management (active / closed)
-- Participant tracking per room
+## 🎙️ Room System
+
+- Create voice rooms
+- Join / leave rooms
+- Public & private rooms
+- Language-based room grouping
+- Max participant control
+
+Room Features:
+- Auto generate unique Agora channel
+- Auto delete room when empty
+- Creator-based permissions
 
 ---
 
-### 🎤 Real-Time Ready Architecture
-- Agora RTC integration for voice/video channels
-- Unique channel generation per room
-- Token-based secure Agora authentication
-- Random UID generation for participants
+## 👥 Room Management
+
+- Kick users from room
+- Mute / unmute users
+- Close room (creator only)
+- Participant tracking system
 
 ---
 
-### 🛡️ Moderation System
-- Ban / Unban users (Admin-only)
-- Kick users from rooms (Admin / Creator)
-- Mute / Unmute participants
-- Automatic participant cleanup on ban/kick
+## 🛡️ Admin System
+
+Admin-only features:
+
+- View platform statistics
+  - total users
+  - total rooms
+  - active rooms
+  - banned users
+
+- User management:
+  - ban user
+  - unban user
+
+- Room management:
+  - force close room
+  - kick users from any room
 
 ---
 
-### 👑 Admin Panel APIs
-- Platform statistics (users, rooms, active rooms)
-- Full user management (ban/unban)
-- Room management (close/kick users)
-- System-wide moderation controls
+## 🔑 Security Layer
+
+- JWT token verification
+- Role-based access control (RBAC)
+- Admin-only dependencies
+- Banned user restriction
+- Protected endpoints
 
 ---
 
-## 🏗️ Tech Stack
+## 🎧 Agora Integration
 
-- **Backend:** FastAPI
-- **Database:** SQLAlchemy + MySQL
-- **Auth:** JWT (python-jose)
-- **Security:** bcrypt (passlib)
-- **Realtime Integration:** Agora RTC
-- **Validation:** Pydantic
-- **Architecture:** Dependency Injection (FastAPI pattern)
+- Real-time voice communication support
+- Dynamic channel generation per room
+- Secure token generation
+- UID-based participant identity
 
 ---
 
-## 📁 Project Structure
-app/
-├── core/
-│ ├── database.py
-│ ├── dependencies.py
-│ ├── security.py
-│ └── config.py
-│
-├── models/
-│ ├── user.py
-│ ├── room.py
-│ └── participant.py
-│
-├── routes/
-│ ├── auth.py
-│ ├── rooms.py
-│ └── admin.py
-│
-├── schemas/
-│ ├── user.py
-│ ├── room.py
-│ └── admin.py
-│
-└── services/
-└── agora_service.py
+## 📡 API Endpoints
 
-
-
----
-
-## ⚙️ Key System Design Concepts
-
-### 🔄 State Management
-- Rooms transition between `ACTIVE` and `CLOSED`
-- Participants tracked with join/leave lifecycle
-- Automatic cleanup when rooms become empty
-
----
-
-### 🧠 Access Control Logic
-- Admin-only endpoints protected via dependency injection
-- Room creator permissions separated from admin permissions
-- Optional authentication for public endpoints
-
----
-
-### 📡 Real-Time Architecture (Agora)
-- Each room generates a unique Agora channel
-- Secure token generation per user session
-- Random UID assignment for collision safety
-
----
-
-## 🔥 API Highlights
-
-### Authentication
-
-POST /auth/register
-POST /auth/login
+### Auth
+- POST `/auth/register`
+- POST `/auth/login`
 
 ### Rooms
-
-POST /rooms/ # create room
-GET /rooms/ # list rooms
-POST /rooms/{id}/join # join room
-POST /rooms/{id}/leave # leave room
-POST /rooms/{id}/kick # kick user
-POST /rooms/{id}/mute # mute user
-
+- GET `/rooms`
+- GET `/rooms/{room_id}`
+- POST `/rooms`
+- POST `/rooms/{room_id}/join`
+- POST `/rooms/{room_id}/leave`
+- POST `/rooms/{room_id}/kick/{user_id}`
+- POST `/rooms/{room_id}/close`
+- GET `/rooms/{room_id}/token`
 
 ### Admin
-
-GET /admin/stats
-GET /admin/users
-POST /admin/users/{id}/ban
-POST /admin/users/{id}/unban
-GET /admin/rooms
-POST /admin/rooms/{id}/close
-
+- GET `/admin/stats`
+- GET `/admin/users`
+- POST `/admin/users/{user_id}/ban`
+- POST `/admin/users/{user_id}/unban`
+- GET `/admin/rooms`
+- POST `/admin/rooms/{room_id}/close`
 
 ---
 
-## 💡 Key Learnings
+## 🗄️ Database Models
 
-- Designing real-time backend systems
-- Role-based access control at scale
-- Building moderation systems (ban/mute/kick flows)
-- Managing relational state between users and rooms
-- Integrating third-party RTC services (Agora)
-- Structuring production-ready FastAPI applications
+- User
+  - id, username, email, password
+  - is_admin, is_banned, is_verified
 
----
+- Room
+  - id, title, topic, language
+  - max_participants, status
+  - agora_channel_name
 
-## 🚀 Why this project matters
-
-This project simulates a real-world backend system similar to:
-- Discord (rooms + voice channels)
-- Clubhouse (real-time rooms)
-- Slack (user + room interaction systems)
-
-It demonstrates:
-- System design thinking
-- Backend architecture skills
-- Security awareness
-- Real-time system integration
+- Participant
+  - user_id, room_id
+  - is_muted, is_banned
 
 ---
 
-## 📌 Status
+## 🚀 Features Summary
 
-✔ Backend completed  
-✔ Authentication system implemented  
-✔ Admin moderation system implemented  
-✔ Agora integration completed  
+- JWT authentication system
+- Role-based access control (Admin/User)
+- Real-time voice room backend
+- Agora RTC integration
+- Scalable modular architecture
+- Secure API design
+- Full room lifecycle management
 
 ---
 
-## 👤 Author
+## 🚀 Future Improvements
 
-Built as part of a personal full-stack portfolio focused on:
-- Backend engineering
-- System design
-- Real-time applications
+- WebSocket real-time updates
+- Chat system inside rooms
+- Notifications system
+- Docker deployment
+- CI/CD pipeline
+- Microservice separation
+
+---
+
+## 👨‍💻 Author
+
+Full-Stack Backend Project  
+Built with FastAPI + SQLAlchemy + Agora RTC
